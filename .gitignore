@@ -46,3 +46,7 @@ app.*.map.json
 
 # Local build artifacts
 dist/
+
+# Local browser profiles and home-directory spill (never commit)
+/~/
+chrome-dev-session/
