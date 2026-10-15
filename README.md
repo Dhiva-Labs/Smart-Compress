@@ -1,9 +1,13 @@
 # CompressX by DhivaLabs
 
+[![ARM64 builds](https://github.com/Dhiva-Labs/Smart-Compress/actions/workflows/desktop.yml/badge.svg?branch=main)](https://github.com/Dhiva-Labs/Smart-Compress/actions/workflows/desktop.yml)
+![Linux x64 | arm64](https://img.shields.io/badge/Linux-x64%20%7C%20arm64-informational?logo=linux&logoColor=white)
+![Windows x64 | arm64](https://img.shields.io/badge/Windows-x64%20%7C%20arm64-informational?logo=windows&logoColor=white)
+
 Offline-first file compressor and converter built with Flutter. Everything
 runs on-device — no uploads, no ads, no tracking.
 
-Targets: **Linux**, **Windows**, **Android** (single codebase).
+Targets: **Linux** (x64, arm64), **Windows** (x64, arm64), **Android** (single codebase).
 
 ## Modules
 
@@ -48,22 +52,38 @@ flutter build linux   # or: windows, apk
 
 ## Packaging & CI
 
-Every push to `main` runs the **Build** workflow (`.github/workflows/build.yml`):
-analyze + tests, then three artifacts in parallel —
-`smart-compress-windows-x64.zip` (built on a Windows runner), the Ubuntu
-`.deb`, and the Android APK. Download them from the workflow run's
-Artifacts section, or push a tag (`git tag v0.1.0 && git push --tags`) to
-attach all three to a GitHub Release.
+Every push to `main` and every pull request runs the **Desktop builds**
+workflow (`.github/workflows/desktop.yml`): tests, a release build, packaging
+and a start-up check on Linux x64, Linux arm64, Windows x64 and Windows arm64.
+Flutter cannot cross-compile desktop apps, so each leg runs on a native
+runner. Every leg keeps its packages as a workflow artifact:
+
+| Platform      | Files                                                                    |
+|---------------|--------------------------------------------------------------------------|
+| Linux x64     | `smart-compress_<version>_amd64.deb`, `smart-compress-linux-x64.tar.gz`   |
+| Linux arm64   | `smart-compress_<version>_arm64.deb`, `smart-compress-linux-arm64.tar.gz` |
+| Windows x64   | `smart-compress-windows-x64.zip`                                          |
+| Windows arm64 | `smart-compress-windows-arm64.zip`                                        |
+
+When a GitHub Release is published, the same workflow attaches all of them to
+it; a file the release already has is left alone. The Android APK is not built
+in CI (see below).
 
 **Ubuntu .deb locally** — after `flutter build linux --release`:
 
 ```bash
-bash tool/build_deb.sh    # → dist/smart-compress_<version>_amd64.deb
-sudo apt install ./dist/smart-compress_0.1.0_amd64.deb
+bash tool/build_deb.sh    # → dist/smart-compress_<version>_<amd64|arm64>.deb
+sudo apt install ./dist/smart-compress_0.1.0_amd64.deb   # _arm64.deb on an arm64 machine
 ```
 
+The architecture is the one of the machine you build on: `build_deb.sh` and
+`tool/build_tarball.sh` read `build/linux/x64/` or `build/linux/arm64/`
+accordingly.
+
 **Windows locally** — on a Windows machine with Flutter:
-`flutter build windows --release` → `build\windows\x64\runner\Release\`.
+`flutter build windows --release` → `build\windows\x64\runner\Release\`
+(`build\windows\arm64\runner\Release\` on an arm64 machine);
+`tool/package_windows.ps1` zips it.
 
 **Android APK** — `flutter build apk --release`, output at
 `build/app/outputs/flutter-apk/app-release.apk` (signed with the debug key;
