@@ -73,7 +73,7 @@ in CI (see below).
 
 ```bash
 bash tool/build_deb.sh    # → dist/smart-compress_<version>_<amd64|arm64>.deb
-sudo apt install ./dist/smart-compress_0.1.0_amd64.deb   # _arm64.deb on an arm64 machine
+sudo apt install ./dist/smart-compress_1.0.0_amd64.deb   # _arm64.deb on an arm64 machine
 ```
 
 The architecture is the one of the machine you build on: `build_deb.sh` and
