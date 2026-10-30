@@ -119,7 +119,7 @@ class SettingsScreen extends ConsumerWidget {
           const AboutListTile(
             icon: Icon(Icons.info_outline),
             applicationName: 'CompressX',
-            applicationVersion: '0.1.0',
+            applicationVersion: '1.0.0',
             applicationLegalese: '© 2026 DhivaLabs',
             aboutBoxChildren: [
               Text('CompressX by DhivaLabs.\n'
