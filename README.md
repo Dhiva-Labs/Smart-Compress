@@ -3,6 +3,7 @@
 [![ARM64 builds](https://github.com/Dhiva-Labs/Smart-Compress/actions/workflows/desktop.yml/badge.svg?branch=main)](https://github.com/Dhiva-Labs/Smart-Compress/actions/workflows/desktop.yml)
 ![Linux x64 | arm64](https://img.shields.io/badge/Linux-x64%20%7C%20arm64-informational?logo=linux&logoColor=white)
 ![Windows x64 | arm64](https://img.shields.io/badge/Windows-x64%20%7C%20arm64-informational?logo=windows&logoColor=white)
+![Linux: deb | rpm | Arch | AppImage | Flatpak](https://img.shields.io/badge/Linux-deb%20%7C%20rpm%20%7C%20Arch%20%7C%20AppImage%20%7C%20Flatpak-informational?logo=linux&logoColor=white)
 
 Offline-first file compressor and converter built with Flutter. Everything
 runs on-device — no uploads, no ads, no tracking.
@@ -62,6 +63,7 @@ runner. Every leg keeps its packages as a workflow artifact:
 |---------------|--------------------------------------------------------------------------|
 | Linux x64     | `smart-compress_<version>_amd64.deb`, `smart-compress-linux-x64.tar.gz`   |
 | Linux arm64   | `smart-compress_<version>_arm64.deb`, `smart-compress-linux-arm64.tar.gz` |
+| Other Linux   | `smart-compress-<version>-1.<x86_64\|aarch64>.rpm`, `smart-compress-<version>-1-<x86_64\|aarch64>.pkg.tar.zst`, `Smart-Compress-<version>-<x86_64\|aarch64>.AppImage`, `smart-compress-<version>-<x86_64\|aarch64>.flatpak`, `smart-compress-bin-<version>-aur.tar.gz` |
 | Windows x64   | `smart-compress-windows-x64.zip`                                          |
 | Windows arm64 | `smart-compress-windows-arm64.zip`                                        |
 
@@ -79,6 +81,36 @@ sudo apt install ./dist/smart-compress_1.0.0_amd64.deb   # _arm64.deb on an arm6
 The architecture is the one of the machine you build on: `build_deb.sh` and
 `tool/build_tarball.sh` read `build/linux/x64/` or `build/linux/arm64/`
 accordingly.
+
+**Other Linux distributions** — the `.rpm`, Arch package, AppImage and
+Flatpak are made from the same `.deb`, and CI installs and starts each one on
+its distribution (Fedora and openSUSE Tumbleweed for the `.rpm`, Arch, Fedora
+for the AppImage, the Flatpak builder for the Flatpak):
+
+```bash
+sudo dnf install ./smart-compress-1.0.0-1.x86_64.rpm                          # Fedora, RHEL/Rocky/Alma
+sudo zypper install --allow-unsigned-rpm ./smart-compress-1.0.0-1.x86_64.rpm  # openSUSE
+sudo pacman -U ./smart-compress-1.0.0-1-x86_64.pkg.tar.zst                    # Arch, Manjaro
+chmod +x Smart-Compress-1.0.0-x86_64.AppImage && ./Smart-Compress-1.0.0-x86_64.AppImage
+flatpak install --user ./smart-compress-1.0.0-x86_64.flatpak                  # needs the flathub remote
+```
+
+- The `.rpm` recommends ffmpeg, Ghostscript and qpdf (dnf installs them with
+  it) and the Arch package lists them as optional dependencies. Fedora's own
+  ffmpeg (`ffmpeg-free`) has no libx264, which the app uses for MP4, MKV, MOV
+  and AVI video, so those need the full ffmpeg from RPM Fusion; WebM, audio
+  and PDF work with Fedora's packages.
+- The AppImage uses the system's ffmpeg, Ghostscript and qpdf, like the
+  `.deb`.
+- The Flatpak carries its own ffmpeg (with x264, LAME and Opus), Ghostscript
+  and qpdf, from Ubuntu 24.04, because the sandbox cannot run the system's
+  (see `packaging/flatpak/README.md`). It needs the GNOME runtime from Flathub
+  (`flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo`).
+- Everything is built on Ubuntu 24.04; the `.rpm` asks for the glibc its files
+  use, so dnf and zypper refuse a system that is too old. It is not signed,
+  hence `--allow-unsigned-rpm` on openSUSE.
+- The AUR recipe (`smart-compress-bin`, PKGBUILD + .SRCINFO built from the
+  release `.deb`) is not on the AUR yet.
 
 **Windows locally** — on a Windows machine with Flutter:
 `flutter build windows --release` → `build\windows\x64\runner\Release\`

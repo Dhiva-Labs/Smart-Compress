@@ -50,3 +50,6 @@ dist/
 # Local browser profiles and home-directory spill (never commit)
 /~/
 chrome-dev-session/
+
+# Flatpak build input, unpacked by CI (packaging/flatpak/README.md)
+/packaging/flatpak/tree/
