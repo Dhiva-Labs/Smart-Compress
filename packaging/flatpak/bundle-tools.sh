@@ -116,8 +116,9 @@ cat > "$dest/bin/gs" <<EOF
 #!/bin/sh
 # Ghostscript from Ubuntu, pointed at its run-time files next to it (it would
 # look for them under /usr/share, which the Flatpak runtime does not have).
+# No ".." in these paths: gs refuses to combine GenericResourceDir with one.
 here="\$(dirname "\$(readlink -f "\$0")")"
-share="\$here/../share/ghostscript/$gs_version"
+share="\$(dirname "\$here")/share/ghostscript/$gs_version"
 GS_LIB="\$share/Resource/Init:\$share/lib:\$share/Resource/Font\${GS_LIB:+:\$GS_LIB}"
 export GS_LIB
 exec "\$here/gs.bin" -sGenericResourceDir="\$share/Resource/" -sICCProfilesDir="\$share/iccprofiles/" "\$@"
