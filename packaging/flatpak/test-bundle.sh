@@ -57,7 +57,9 @@ echo "::endgroup::"
 
 if [ -n "${SANDBOX_TEST:-}" ]; then
   echo "::group::$SANDBOX_TEST inside the sandbox"
-  dbus-run-session -- flatpak run --command=bash "$app" -s < "$SANDBOX_TEST"
+  # Pass the script as an argument, not on stdin: ffmpeg reads stdin for its
+  # interactive keys and would swallow the rest of the script.
+  dbus-run-session -- flatpak run --command=bash "$app" -c "$(cat "$SANDBOX_TEST")" < /dev/null
   echo "::endgroup::"
 fi
 
