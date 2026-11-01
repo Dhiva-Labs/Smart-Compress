@@ -4,6 +4,17 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Linux packages for other distributions, for x64 and arm64, built from the
+  same build as the `.deb` and installed and started on each target in CI:
+  an `.rpm` for Fedora and openSUSE, an Arch Linux package, an AppImage and a
+  Flatpak bundle (which carries its own ffmpeg, Ghostscript and qpdf), plus
+  an AUR recipe (`smart-compress-bin`). The release job attaches them to each
+  published release.
+
 ## [1.0.0] - 2026-10-16
 
 First release. The version moves from the development number 0.1.0 to 1.0.0 in
